@@ -1,0 +1,155 @@
+/* IBus 候选词面板样式表 */
+/* GTK3 + CSS3 样式支持 */
+
+/* 基础样式 */
+.candidate-panel {
+    background-color: #ffffff;
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* 候选词项 */
+.candidate {
+    font-family: "Noto Sans CJK SC", "Source Han Sans SC", "Microsoft YaHei", sans-serif;
+    font-size: 18px;
+    color: #333333;
+    padding: 6px 12px;
+    cursor: default;
+}
+
+/* 候选词悬停 */
+.candidate:hover {
+    background-color: #f0f0f0;
+    color: #000000;
+}
+
+/* 选中状态 */
+.candidate:selected {
+    background-color: #e8f4fd;
+    color: #0066cc;
+    font-weight: bold;
+}
+
+/* 候选词索引 */
+.candidate-index {
+    font-size: 14px;
+    color: #666666;
+    margin-right: 4px;
+}
+
+/* 空行 */
+.empty-row {
+    padding: 4px 8px;
+}
+
+/* 输入框 */
+.candidate-input {
+    font-family: "Noto Sans CJK SC", "Source Han Sans SC", "Microsoft YaHei", sans-serif;
+    font-size: 16px;
+    padding: 8px;
+    border: 1px solid #c0c0c0;
+    border-radius: 4px;
+    outline: none;
+}
+
+.candidate-input:focus {
+    border-color: #0066cc;
+    box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);
+}
+
+/* 状态栏 */
+.candidate-status {
+    font-size: 12px;
+    color: #999999;
+    padding: 4px 8px;
+    background-color: #f8f8f8;
+    border-top: 1px solid #e0e0e0;
+}
+
+/* 分隔线 */
+.candidate-separator {
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 4px 0;
+}
+
+/* 警告信息 */
+.candidate-warning {
+    color: #cc0000;
+    font-size: 12px;
+    padding: 4px 8px;
+}
+
+/* 错误信息 */
+.candidate-error {
+    color: #cc0000;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 4px 8px;
+}
+
+/* 成功信息 */
+.candidate-success {
+    color: #009900;
+    font-size: 12px;
+    padding: 4px 8px;
+}
+
+/* 自定义主题 */
+.candidate-panel.theme-dark {
+    background-color: #2d2d2d;
+}
+
+.candidate-panel.theme-dark .candidate {
+    color: #ffffff;
+}
+
+.candidate-panel.theme-dark .candidate:hover {
+    background-color: #3d3d3d;
+}
+
+.candidate-panel.theme-dark .candidate:selected {
+    background-color: #0066cc;
+    color: #ffffff;
+}
+
+.candidate-panel.theme-dark .candidate-index {
+    color: #aaaaaa;
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.candidate {
+    animation: fadeIn 0.1s ease-in;
+}
+
+/* 响应式设计 */
+@media (max-width: 800px) {
+    .candidate {
+        font-size: 16px;
+    }
+    
+    .candidate-index {
+        display: none;
+    }
+}

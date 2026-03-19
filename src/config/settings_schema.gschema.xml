@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+    <!-- IBus 配置管理 Schema -->
+    <schema id="ibus-config-manager" path="/ibus/config-manager/">
+        <comment>IBus 中文输入法配置管理系统</comment>
+        
+        <!-- 输入法引擎配置 -->
+        <key name="enabled-engines" type="as">
+            <default>[]</default>
+            <summary>Enabled input engines</summary>
+            <description>List of enabled input engine names (e.g., ['pinyin', 'wubi'])</description>
+        </key>
+        
+        <key name="default-engine" type="s">
+            <default>'pinyin'</default>
+            <summary>Default input engine</summary>
+            <description>Name of the default input engine to use</description>
+        </key>
+        
+        <!-- 拼音引擎特定配置 -->
+        <key name="pinyin-style" type="s">
+            <default>'s'</default>
+            <summary>Pinyin input style</summary>
+            <description>Pinyin input style: 's' (simplified), 't' (traditional)</description>
+            <enum value="s">Simplified</enum>
+            <enum value="t">Traditional</enum>
+        </key>
+        
+        <key name="pinyin-candidates" type="i">
+            <default>6</default>
+            <summary>Number of pinyin candidates</summary>
+            <description>Number of candidate words to show (1-10)</description>
+            <range min="1" max="10"/>
+        </key>
+        
+        <key name="pinyin-tone-mark" type="b">
+            <default>false</default>
+            <summary>Show tone marks</summary>
+            <description>Whether to show tone marks in pinyin input</description>
+        </key>
+        
+        <key name="pinyin-freshness" type="b">
+            <default>false</default>
+            <summary>Use fresh input</summary>
+            <description>Whether to use fresh input for new words</description>
+        </key>
+        
+        <!-- 候选词配置 -->
+        <key name="candidate-style" type="s">
+            <default>'normal'</default>
+            <summary>Candidate style</summary>
+            <description>Candidate display style</description>
+            <enum value="normal">Normal</enum>
+            <enum value="compact">Compact</enum>
+            <enum value="wide">Wide</enum>
+        </key>
+        
+        <key name="candidate-num-width" type="i">
+            <default>1</default>
+            <summary>Candidate number width</summary>
+            <description>Width of candidate number display</description>
+            <range min="1" max="3"/>
+        </key>
+        
+        <!-- 外观配置 -->
+        <key name="show-toolbar" type="b">
+            <default>true</default>
+            <summary>Show toolbar</summary>
+            <description>Whether to show the input toolbar</description>
+        </key>
+        
+        <key name="show-candidates" type="b">
+            <default>true</default>
+            <summary>Show candidates</summary>
+            <description>Whether to show candidate popups</description>
+        </key>
+        
+        <key name="candidate-popup-width" type="i">
+            <default>300</default>
+            <summary>Candidate popup width</summary>
+            <description>Width of candidate popup window in pixels</description>
+            <range min="150" max="600"/>
+        </key>
+        
+        <key name="candidate-popup-height" type="i">
+            <default>200</default>
+            <summary>Candidate popup height</summary>
+            <description>Height of candidate popup window in pixels</description>
+            <range min="100" max="400"/>
+        </key>
+        
+        <key name="toolbar-font" type="s">
+            <default>'Sans 12'</default>
+            <summary>Toolbar font</summary>
+            <description>Font for toolbar display</description>
+        </key>
+        
+        <!-- 快捷键配置 -->
+        <key name="show-candidates-key" type="s">
+            <default>'&lt;Control&gt;I'</default>
+            <summary>Show candidates key</summary>
+            <description>Keyboard shortcut to show/hide candidates</description>
+        </key>
+        
+        <key name="select-key" type="s">
+            <default>'Return'</default>
+            <summary>Select key</summary>
+            <description>Keyboard shortcut to select candidate</description>
+        </key>
+        
+        <key name="next-key" type="s">
+            <default>'&lt;Control&gt;Space'</default>
+            <summary>Next candidate key</summary>
+            <description>Keyboard shortcut to cycle to next candidate</description>
+        </key>
+        
+        <!-- 输入法状态配置 -->
+        <key name="current-engine" type="s">
+            <default>'pinyin'</default>
+            <summary>Current active engine</summary>
+            <description>Name of currently active input engine</description>
+        </key>
+        
+        <key name="language" type="s">
+            <default>'zh_CN'</default>
+            <summary>Input language</summary>
+            <description>Input language code (e.g., zh_CN, zh_TW)</description>
+        </key>
+        
+        <!-- 历史记录配置 -->
+        <key name="history-enabled" type="b">
+            <default>true</default>
+            <summary>Enable history</summary>
+            <description>Whether to enable input history</description>
+        </key>
+        
+        <key name="history-max-size" type="i">
+            <default>100</default>
+            <summary>Maximum history size</summary>
+            <description>Maximum number of entries in history</description>
+            <range min="10" max="1000"/>
+        </key>
+        
+        <key name="history-max-length" type="i">
+            <default>50</default>
+            <summary>Maximum history entry length</summary>
+            <description>Maximum length of each history entry</description>
+            <range min="10" max="500"/>
+        </key>
+        
+        <!-- 自动转换配置 -->
+        <key name="auto-convert" type="b">
+            <default>false</default>
+            <summary>Enable auto conversion</summary>
+            <description>Whether to automatically convert input</description>
+        </key>
+        
+        <key name="auto-convert-mode" type="s">
+            <default>'none'</default>
+            <summary>Auto convert mode</summary>
+            <description>Mode for automatic conversion</description>
+            <enum value="none">None</enum>
+            <enum value="english-chinese">English-Chinese</enum>
+            <enum value="english-number">English-Number</enum>
+            <enum value="all">All</enum>
+        </key>
+        
+        <!-- 主题配置 -->
+        <key name="theme" type="s">
+            <default>'default'</default>
+            <summary>Theme</summary>
+            <description>Visual theme for IBus</description>
+        </key>
+        
+        <key name="theme-color" type="s">
+            <default>'#333333'</default>
+            <summary>Theme color</summary>
+            <description>Primary color for the theme</description>
+        </key>
+        
+        <!-- 高级配置 -->
+        <key name="show-suggestions" type="b">
+            <default>true</default>
+            <summary>Show suggestions</summary>
+            <description>Whether to show spelling suggestions</description>
+        </key>
+        
+        <key name="suggestion-max" type="i">
+            <default>5</default>
+            <summary>Maximum suggestions</summary>
+            <description>Maximum number of suggestions to show</description>
+            <range min="1" max="20"/>
+        </key>
+        
+        <key name="enable-predict" type="b">
+            <default>true</default>
+            <summary>Enable prediction</summary>
+            <description>Whether to enable word prediction</description>
+        </key>
+        
+        <key name="prediction-max" type="i">
+            <default>5</default>
+            <summary>Maximum predictions</summary>
+            <description>Maximum number of predicted words to show</description>
+            <range min="1" max="10"/>
+        </key>
+        
+        <key name="enable-fresh" type="b">
+            <default>false</default>
+            <summary>Enable fresh input</summary>
+            <description>Whether to enable fresh input for learning</description>
+        </key>
+        
+        <key name="fresh-timeout" type="i">
+            <default>1800000</default>
+            <summary>Fresh timeout (ms)</summary>
+            <description>Timeout for fresh input in milliseconds</description>
+            <range min="60000" max="3600000"/>
+        </key>
+        
+        <!-- 备份配置 -->
+        <key name="backup-enabled" type="b">
+            <default>true</default>
+            <summary>Enable auto backup</summary>
+            <description>Whether to enable automatic configuration backup</description>
+        </key>
+        
+        <key name="backup-path" type="s">
+            <default>'~/.config/ibus/backup'</default>
+            <summary>Backup path</summary>
+            <description>Path for storing configuration backups</description>
+        </key>
+        
+        <key name="backup-frequency" type="s">
+            <default>'daily'</default>
+            <summary>Backup frequency</summary>
+            <description>How often to create automatic backups</description>
+            <enum value="never">Never</enum>
+            <enum value="hourly">Hourly</enum>
+            <enum value="daily">Daily</enum>
+            <enum value="weekly">Weekly</enum>
+            <enum value="monthly">Monthly</enum>
+        </key>
+        
+        <!-- 日志配置 -->
+        <key name="log-enabled" type="b">
+            <default>false</default>
+            <summary>Enable logging</summary>
+            <description>Whether to enable debug logging</description>
+        </key>
+        
+        <key name="log-level" type="s">
+            <default>'info'</default>
+            <summary>Log level</summary>
+            <description>Level of logging verbosity</description>
+            <enum value="debug">Debug</enum>
+            <enum value="info">Info</enum>
+            <enum value="warning">Warning</enum>
+            <enum value="error">Error</enum>
+        </key>
+        
+        <key name="log-path" type="s">
+            <default>'~/.config/ibus/config-manager.log'</default>
+            <summary>Log path</summary>
+            <description>Path to store configuration logs</description>
+        </key>
+        
+        <!-- 引擎排序配置 -->
+        <key name="engine-order" type="as">
+            <default>['pinyin', 'wubi', 'english', 'handwriting']</default>
+            <summary>Engine order</summary>
+            <description>Order of input engines in the toolbar</description>
+        </key>
+        
+        <!-- 用户自定义词典 -->
+        <key name="custom-dict-enabled" type="b">
+            <default>false</default>
+            <summary>Enable custom dictionary</summary>
+            <description>Whether to enable custom dictionary</description>
+        </key>
+        
+        <key name="custom-dict-path" type="s">
+            <default>'~/.config/ibus/dictionary'</default>
+            <summary>Custom dictionary path</summary>
+            <description>Path to custom dictionary file</description>
+        </key>
+        
+        <!-- 兼容性配置 -->
+        <key name="compat-mode" type="s">
+            <default>'none'</default>
+            <summary>Compatibility mode</summary>
+            <description>Compatibility mode for legacy applications</description>
+            <enum value="none">None</enum>
+            <enum value="x11">X11</enum>
+            <enum value="wayland">Wayland</enum>
+        </key>
+    </schema>
+</schemalist>

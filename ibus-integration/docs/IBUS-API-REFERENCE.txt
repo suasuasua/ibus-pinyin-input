@@ -1,0 +1,237 @@
+# IBus API 参考
+
+## 概述
+
+本文档详细说明了 IBus 框架的核心 API 接口，包括输入引擎开发所需的函数、信号和回调。
+
+## 核心接口
+
+### IBusEngine
+
+输入方法引擎抽象类，提供输入法引擎的基础功能。
+
+#### 回调函数
+
+| 函数 | 参数 | 返回值 | 说明 |
+|------|------|--------|------|
+| `process_key_event` | IBusEngine *engine, guint keyval, guint keycode, guint state | gboolean | 处理键盘按键事件 |
+| `focus_in` | IBusEngine *engine | void | 输入法获得焦点 |
+| `focus_out` | IBusEngine *engine | void | 输入法失去焦点 |
+| `reset` | IBusEngine *engine | void | 重置输入法状态 |
+| `enable` | IBusEngine *engine | void | 启用输入法 |
+| `disable` | IBusEngine *engine | void | 禁用输入法 |
+| `set_cursor_location` | IBusEngine *engine, gint x, gint y, gint w, gint h | void | 设置光标位置 |
+| `set_capabilities` | IBusEngine *engine, guint caps | void | 设置客户端能力 |
+| `page_up` | IBusEngine *engine | void | 向上翻页 |
+| `page_down` | IBusEngine *engine | void | 向下翻页 |
+| `cursor_up` | IBusEngine *engine | void | 光标上移 |
+| `cursor_down` | IBusEngine *engine | void | 光标下移 |
+| `candidate_clicked` | IBusEngine *engine, guint index, guint button, guint state | void | 候选词点击 |
+| `set_surrounding_text` | IBusEngine *engine, IBusText *text, guint cursor_index, guint anchor_pos | void | 设置上下文文本 |
+| `get_surrounding_text` | IBusEngine *engine, IBusText **text, guint *cursor_pos, guint *anchor_pos | void | 获取上下文文本 |
+| `delete_surrounding_text` | IBusEngine *engine, gint offset, guint nchars | void | 删除上下文文本 |
+| `set_content_type` | IBusEngine *engine, guint purpose, guint hints | void | 设置内容类型 |
+| `process_hand_writing_event` | IBusEngine *engine, const gdouble *coordinates, guint coordinates_len | void | 处理手写事件 |
+| `cancel_hand_writing` | IBusEngine *engine, guint n_strokes | void | 取消手写 |
+
+#### 主要函数
+
+| 函数 | 参数 | 返回值 | 说明 |
+|------|------|--------|------|
+| `ibus_engine_new` | engine_name, object_path, connection | IBusEngine * | 创建新的 IBusEngine |
+| `ibus_engine_new_with_type` | engine_type, engine_name, object_path, connection | IBusEngine * | 使用类型创建引擎 |
+| `ibus_engine_commit_text` | engine, text | void | 提交文本到客户端 |
+| `ibus_engine_update_preedit_text` | engine, text, cursor_pos, visible | void | 更新预编辑文本 |
+| `ibus_engine_update_preedit_text_with_mode` | engine, text, cursor_pos, visible, mode | void | 更新预编辑文本（带模式） |
+| `ibus_engine_show_preedit_text` | engine | void | 显示预编辑区 |
+| `ibus_engine_hide_preedit_text` | engine | void | 隐藏预编辑区 |
+| `ibus_engine_update_auxiliary_text` | engine, text, visible | void | 更新辅助文本 |
+| `ibus_engine_update_lookup_table` | engine, lookup_table, visible | void | 更新候选词表 |
+| `ibus_engine_update_lookup_table_fast` | engine, lookup_table, visible | void | 快速更新候选词表 |
+| `ibus_engine_show_lookup_table` | engine | void | 显示候选词表 |
+| `ibus_engine_hide_lookup_table` | engine | void | 隐藏候选词表 |
+| `ibus_engine_forward_key_event` | engine, keyval, keycode, state | void | 转发按键事件 |
+| `ibus_engine_register_properties` | engine, prop_list | void | 注册属性 |
+| `ibus_engine_update_property` | engine, prop | void | 更新属性 |
+| `ibus_engine_get_surrounding_text` | engine, text, cursor_pos, anchor_pos | void | 获取上下文文本 |
+| `ibus_engine_get_content_type` | engine, purpose, hints | void | 获取内容类型 |
+
+### IBusEngineSimple
+
+基于表格的输入法引擎抽象类。
+
+#### 回调函数
+
+| 函数 | 参数 | 返回值 | 说明 |
+|------|------|--------|------|
+| `process_key_event` | engine, keyval, keycode, state | gboolean | 处理按键事件 |
+| `focus_in` | engine | void | 获得焦点 |
+| `focus_out` | engine | void | 失去焦点 |
+| `reset` | engine | void | 重置状态 |
+| `enable` | engine | void | 启用 |
+| `disable` | engine | void | 禁用 |
+| `set_cursor_location` | engine, x, y, w, h | void | 设置光标位置 |
+| `set_capabilities` | engine, caps | void | 设置能力 |
+| `page_up` | engine | void | 上翻页 |
+| `page_down` | engine | void | 下翻页 |
+| `cursor_up` | engine | void | 光标上移 |
+| `cursor_down` | engine | void | 光标下移 |
+| `candidate_clicked` | engine, index, button, state | void | 候选词点击 |
+
+#### 主要函数
+
+| 函数 | 参数 | 返回值 | 说明 |
+|------|------|--------|------|
+| `ibus_engine_simple_get_type` | - | GType | 获取类型 ID |
+| `ibus_engine_simple_add_table` | simple, data, max_seq_len, n_seqs | void | 添加输入表 |
+| `ibus_engine_simple_add_table_by_locale` | simple, locale | void | 按语言添加表 |
+| `ibus_engine_simple_add_table_by_locale2` | simple, locale, locale2 | void | 按语言对添加表 |
+
+### IBusInputContext
+
+输入上下文代理对象。
+
+#### 主要函数
+
+| 函数 | 参数 | 返回值 | 说明 |
+|------|------|--------|------|
+| `ibus_input_context_new` | path, connection, cancellable, error | IBusInputContext * | 创建新上下文 |
+| `ibus_input_context_new_async` | path, connection, cancellable, callback, user_data | void | 异步创建上下文 |
+| `ibus_input_context_get_input_context` | path, connection | IBusInputContext * | 获取现有上下文 |
+| `ibus_input_context_process_hand_writing_event` | context, coordinates, coordinates_len | void | 处理手写事件 |
+| `ibus_input_context_cancel_hand_writing` | context, n_strokes | void | 取消手写 |
+| `ibus_input_context_process_key_event` | context, keyval, keycode, state | gboolean | 处理按键事件 |
+| `ibus_input_context_process_key_event_async` | context, keyval, keycode, state, timeout_msec, cancellable, callback, user_data | void | 异步处理按键 |
+| `ibus_input_context_set_cursor_location` | context, x, y, w, h | void | 设置光标位置 |
+| `ibus_input_context_set_capabilities` | context, capabilities | void | 设置客户端能力 |
+| `ibus_input_context_property_activate` | context, prop_name, state | void | 激活属性 |
+| `ibus_input_context_focus_in` | context | void | 获得焦点 |
+| `ibus_input_context_focus_out` | context | void | 失去焦点 |
+| `ibus_input_context_reset` | context | void | 重置 |
+
+### IBusText
+
+文本对象，支持装饰信息。
+
+#### 主要函数
+
+| 函数 | 参数 | 返回值 | 说明 |
+|------|------|--------|------|
+| `ibus_text_new_from_string` | string | IBusText * | 从字符串创建文本 |
+| `ibus_text_new_from_string_with_utf8` | string | IBusText * | 从 UTF-8 字符串创建 |
+| `ibus_text_new_from_string_with_utf8_and_preedit` | string, preedit | IBusText * | 带预编辑文本 |
+| `ibus_text_get_length` | text | guint | 获取文本长度 |
+| `ibus_text_get_string` | text, start_index, end_index | const gchar * | 获取文本片段 |
+
+### IBusLookupTable
+
+候选词查找表。
+
+#### 主要函数
+
+| 函数 | 参数 | 返回值 | 说明 |
+|------|------|--------|------|
+| `ibus_lookup_table_new` | IBusEngine *engine | IBusLookupTable * | 创建新查找表 |
+| `ibus_lookup_table_add` | table, preedit, cursor_pos, visible, candidate, candidate_info | void | 添加候选项 |
+| `ibus_lookup_table_add_with_key_info` | table, preedit, cursor_pos, visible, candidate, candidate_info, key_info | void | 带键信息的候选项 |
+| `ibus_lookup_table_show` | table | void | 显示查找表 |
+| `ibus_lookup_table_hide` | table | void | 隐藏查找表 |
+
+### IBusProperty
+
+输入引擎属性。
+
+#### 主要函数
+
+| 函数 | 参数 | 返回值 | 说明 |
+|------|------|--------|------|
+| `ibus_property_new` | IBusEngine *engine, const gchar *name, const gchar *value | IBusProperty * | 创建新属性 |
+| `ibus_property_set_value` | prop, value | void | 设置属性值 |
+| `ibus_property_show` | prop | void | 显示属性 |
+| `ibus_property_hide` | prop | void | 隐藏属性 |
+
+### IBusPropList
+
+属性列表。
+
+#### 主要函数
+
+| 函数 | 参数 | 返回值 | 说明 |
+|------|------|--------|------|
+| `ibus_prop_list_new` | IBusEngine *engine | IBusPropList * | 创建新属性列表 |
+| `ibus_prop_list_add` | list, prop | void | 添加属性到列表 |
+
+## IBus 能力标志
+
+| 标志 | 值 | 说明 |
+|------|-----|------|
+| `IBUS_CAP_FOCUS` | 0x0001 | 支持焦点 |
+| `IBUS_CAP_PREEDIT_TEXT` | 0x0002 | 支持预编辑文本 |
+| `IBUS_CAP_AUXILIARY_TEXT` | 0x0004 | 支持辅助文本 |
+| `IBUS_CAP_LOOKUP_TABLE` | 0x0008 | 支持查找表 |
+| `IBUS_CAP_PROPERTY` | 0x0010 | 支持属性 |
+
+## 消息类型
+
+| 标志 | 值 | 说明 |
+|------|-----|------|
+| `IBUS_MESSAGE_TYPE_ERROR` | 0x01 | 错误消息 |
+| `IBUS_MESSAGE_TYPE_WARNING` | 0x02 | 警告消息 |
+| `IBUS_MESSAGE_TYPE_INFO` | 0x04 | 信息消息 |
+
+## 示例代码
+
+### 基本的按键处理
+
+```c
+static gboolean
+my_engine_process_key_event (IBusEngine *engine,
+                             guint keyval,
+                             guint keycode,
+                             guint state)
+{
+    MyInputEngine *my_engine = MY_INPUT_ENGINE (engine);
+    MyInputEnginePrivate *priv = MY_INPUT_ENGINE_GET_PRIVATE (my_engine);
+    IBusText *text;
+    guint cursor_pos;
+    
+    // 处理按键逻辑
+    // ...
+    
+    // 更新预编辑文本
+    text = ibus_text_new_from_string (priv->preedit_text);
+    cursor_pos = priv->cursor_pos;
+    ibus_engine_update_preedit_text (engine, text, cursor_pos, TRUE);
+    g_object_unref (text);
+    
+    return TRUE;
+}
+```
+
+### 提交候选词
+
+```c
+static void
+my_engine_candidate_clicked (IBusEngine *engine,
+                             guint index,
+                             guint button,
+                             guint state)
+{
+    MyInputEngine *my_engine = MY_INPUT_ENGINE (engine);
+    MyInputEnginePrivate *priv = MY_INPUT_ENGINE_GET_PRIVATE (my_engine);
+    IBusText *text;
+    
+    // 获取候选词
+    if (index < priv->candidates->len) {
+        // 提交候选词
+        text = ibus_text_new_from_string (priv->candidates[index]);
+        ibus_engine_commit_text (engine, text);
+        g_object_unref (text);
+    }
+}
+```
+
+## 参考
+
+- [IBus 官方文档](https://ibus.github.io/docs/)
+- [IBus GitHub](https://github.com/ibus/ibus)

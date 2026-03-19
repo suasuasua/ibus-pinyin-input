@@ -1,0 +1,415 @@
+# IBus 插件结构说明
+
+## 插件目录结构
+
+```
+my-input-engine/
+├── src/
+│   ├── my-input-engine.c          # 引擎实现
+│   ├── my-input-engine.h          # 引擎头文件
+│   ├── my-input-engine-desc.c     # 引擎描述实现
+│   ├── my-input-engine-desc.h     # 引擎描述头文件
+│   └── Makefile.am                # Makefile 规范
+├── docs/
+│   ├── my-input-engine.xml        # 引擎配置文件
+│   └── README.md                  # 引擎说明文档
+├── data/
+│   ├── icons/
+│   │   └── my-input-engine.png    # 引擎图标
+│   └── schemas/
+│       └── org.freedesktop.ibus.engine.my-input-engine.gschema.xml
+├── tests/
+│   └── test-my-input-engine.c     # 测试代码
+└── Makefile                       # 构建文件
+```
+
+## 核心文件说明
+
+### 1. my-input-engine.c
+
+输入法引擎的主要实现文件。
+
+#### 结构定义
+
+```c
+typedef struct _MyInputEngine MyInputEngine;
+typedef struct _MyInputEngineClass MyInputEngineClass;
+typedef struct _MyInputEnginePrivate MyInputEnginePrivate;
+
+struct _MyInputEngine {
+    IBusEngineSimple parent;
+};
+
+struct _MyInputEnginePrivate {
+    // 引擎私有数据
+    guint32 *key_history;
+    gint key_history_len;
+    gchar *preedit_text;
+    guint preedit_len;
+    gboolean preedit_visible;
+    // ...
+};
+```
+
+#### 必需函数
+
+```c
+// 类型定义
+GType my_input_engine_get_type (void);
+
+// 引擎初始化
+void my_input_engine_init (MyInputEngine *engine);
+
+// 类初始化
+void my_input_engine_class_init (MyInputEngineClass *klass);
+
+// 销毁函数
+static void my_input_engine_destroy (IBusEngineSimple *simple);
+```
+
+#### 回调函数（必需）
+
+```c
+// 按键处理
+static gboolean my_input_engine_process_key_event
+    (IBusEngine *engine,
+     guint keyval,
+     guint keycode,
+     guint state);
+
+// 焦点管理
+static void my_input_engine_focus_in (IBusEngine *engine);
+static void my_input_engine_focus_out (IBusEngine *engine);
+
+// 重置
+static void my_input_engine_reset (IBusEngine *engine);
+
+// 启用/禁用
+static void my_input_engine_enable (IBusEngine *engine);
+static void my_input_engine_disable (IBusEngine *engine);
+
+// 候选词点击
+static void my_input_engine_candidate_clicked
+    (IBusEngine *engine,
+     guint index,
+     guint button,
+     guint state);
+
+// 上下文管理
+static void my_input_engine_set_surrounding_text
+    (IBusEngine *engine,
+     IBusText *text,
+     guint cursor_index,
+     guint anchor_pos);
+
+static void my_input_engine_get_surrounding_text
+    (IBusEngine *engine,
+     IBusText **text,
+     guint *cursor_pos,
+     guint *anchor_pos);
+
+// 文本更新
+static void my_input_engine_update_preedit_text
+    (IBusEngine *engine,
+     IBusText *text,
+     guint cursor_pos,
+     gboolean visible);
+
+static void my_input_engine_commit_text
+    (IBusEngine *engine,
+     IBusText *text);
+```
+
+#### 可选回调
+
+```c
+// 光标位置
+static void my_input_engine_set_cursor_location
+    (IBusEngine *engine,
+     gint x,
+     gint y,
+     gint w,
+     gint h);
+
+// 客户端能力
+static void my_input_engine_set_capabilities
+    (IBusEngine *engine,
+     guint caps);
+
+// 翻页
+static void my_input_engine_page_up (IBusEngine *engine);
+static void my_input_engine_page_down (IBusEngine *engine);
+
+// 光标移动
+static void my_input_engine_cursor_up (IBusEngine *engine);
+static void my_input_engine_cursor_down (IBusEngine *engine);
+
+// 属性管理
+static void my_input_engine_property_activate
+    (IBusEngine *engine,
+     const gchar *prop_name,
+     guint prop_state);
+
+static void my_input_engine_property_show (IBusEngine *engine,
+                                           const gchar *prop_name);
+static void my_input_engine_property_hide (IBusEngine *engine,
+                                           const gchar *prop_name);
+
+// 文本显示
+static void my_input_engine_show_preedit_text (IBusEngine *engine);
+static void my_input_engine_hide_preedit_text (IBusEngine *engine);
+static void my_input_engine_show_lookup_table (IBusEngine *engine);
+static void my_input_engine_hide_lookup_table (IBusEngine *engine);
+
+// 辅助文本
+static void my_input_engine_update_auxiliary_text
+    (IBusEngine *engine,
+     IBusText *text,
+     gboolean visible);
+static void my_input_engine_show_auxiliary_text (IBusEngine *engine);
+static void my_input_engine_hide_auxiliary_text (IBusEngine *engine);
+
+// 文本删除
+static void my_input_engine_delete_surrounding_text
+    (IBusEngine *engine,
+     gint offset,
+     guint nchars);
+
+// 内容类型
+static void my_input_engine_set_content_type
+    (IBusEngine *engine,
+     guint purpose,
+     guint hints);
+
+// 手写支持
+static void my_input_engine_process_hand_writing_event
+    (IBusEngine *engine,
+     const gdouble *coordinates,
+     guint coordinates_len);
+static void my_input_engine_cancel_hand_writing
+    (IBusEngine *engine,
+     guint n_strokes);
+```
+
+### 2. my-input-engine.h
+
+引擎头文件，包含类型定义和函数声明。
+
+```c
+#ifndef __MY_INPUT_ENGINE_H__
+#define __MY_INPUT_ENGINE_H__
+
+#include "ibus.h"
+#include "ibusenginesimple.h"
+
+G_BEGIN_DECLS
+
+#define MY_TYPE_INPUT_ENGINE             \
+    (my_input_engine_get_type ())
+#define MY_INPUT_ENGINE(obj)             \
+    (MY_TYPE_INPUT_ENGINE (obj))
+#define MY_IS_INPUT_ENGINE(obj)          \
+    (MY_TYPE_INPUT_ENGINE (obj))
+
+typedef struct _MyInputEngine MyInputEngine;
+typedef struct _MyInputEngineClass MyInputEngineClass;
+typedef struct _MyInputEnginePrivate MyInputEnginePrivate;
+
+GType          my_input_engine_get_type       (void);
+
+IBusEngine    *my_input_engine_new            (const gchar *engine_name,
+                                                const gchar *object_path,
+                                                GDBusConnection *connection);
+
+G_END_DECLS
+
+#endif
+```
+
+### 3. my-input-engine-desc.c
+
+引擎描述文件实现。
+
+```c
+// 引擎描述结构
+struct _MyInputEngineDesc {
+    IBusObject parent;
+    gchar *name;
+    gchar *author;
+    gchar *author_email;
+    gchar *icon;
+    gchar *description;
+    gchar *license;
+    gchar **lang;
+    gchar **property;
+    gchar *version;
+};
+
+// 创建描述
+IBusEngineDesc *my_input_engine_desc_new
+    (const gchar *name,
+     const gchar *author,
+     const gchar *author_email,
+     const gchar *icon,
+     const gchar *description,
+     const gchar *license,
+     gchar **lang,
+     const gchar *version);
+```
+
+### 4. my-input-engine.xml
+
+引擎配置文件，定义引擎元数据。
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE engine>
+<engine>
+    <!-- 基本信息 -->
+    <name>my-input-engine</name>
+    <description>Engine Description</description>
+    <author>Author Name</author>
+    <license>LGPL</license>
+    <version>1.0.0</version>
+    
+    <!-- 支持的语言 -->
+    <lang>en</lang>
+    <lang>zh_CN</lang>
+    <lang>zh_TW</lang>
+    
+    <!-- 引擎能力 -->
+    <capability>Focus</capability>
+    <capability>PreeditText</capability>
+    <capability>LookupTable</capability>
+    
+    <!-- 属性配置 -->
+    <property>
+        <name>InputMode</name>
+        <default>Normal</default>
+    </property>
+</engine>
+```
+
+## Makefile.am 规范
+
+```makefile
+# 源文件列表
+noinst_LTLIBRARIES = libmy-input-engine.la
+
+libmy_input_engine_la_SOURCES = \
+    my-input-engine.c \
+    my-input-engine-desc.c
+
+libmy_input_engine_la_LIBTOOLFLAGS = --tag=shared
+libmy_input_engine_la_LDFLAGS = -version-info 1:0:0
+
+# 头文件
+noinst_HEADERS = \
+    my-input-engine.h \
+    my-input-engine-desc.h
+
+# 配置文件
+enginesdir = $(libdir)/ibus/engines
+engines_DATA = my-input-engine.xml
+
+# 数据文件
+datadir = $(datadir)/ibus/engines
+data_DATA = my-input-engine.xml
+```
+
+## 构建步骤
+
+### 1. 准备构建环境
+
+```bash
+autoreconf -i
+```
+
+### 2. 配置
+
+```bash
+./configure --prefix=/usr
+```
+
+### 3. 编译
+
+```bash
+make
+```
+
+### 4. 安装
+
+```bash
+make install
+```
+
+## 测试步骤
+
+### 1. 运行测试
+
+```bash
+./tests/test-my-input-engine
+```
+
+### 2. 手动测试
+
+```bash
+# 设置默认输入法
+gsettings set org.freedesktop.ibus.settings.inputmethod default-input-method "my-input-engine"
+
+# 重启 IBus 守护进程
+ibus-daemon --replace
+
+# 测试输入法
+```
+
+## 调试技巧
+
+### 1. 启用调试信息
+
+```bash
+./configure --enable-debug
+```
+
+### 2. 查看引擎日志
+
+```bash
+journalctl -f -t ibus
+```
+
+### 3. 检查引擎状态
+
+```bash
+gsettings list-keys org.freedesktop.ibus.engine.my-input-engine
+```
+
+## 常见问题
+
+### Q1: 引擎无法加载
+
+A: 检查配置文件路径和语法：
+```bash
+ls /usr/share/ibus/engines/my-input-engine.xml
+ibus-enumerate-engines
+```
+
+### Q2: 按键事件未处理
+
+A: 检查回调函数是否已注册：
+```c
+engine_class->process_key_event = my_input_engine_process_key_event;
+```
+
+### Q3: 候选词未显示
+
+A: 检查查找表更新：
+```c
+IBusLookupTable *table = ibus_lookup_table_new (engine);
+ibus_engine_update_lookup_table (engine, table, TRUE);
+```
+
+## 参考资源
+
+- [IBus 官方文档](https://ibus.github.io/docs/)
+- [IBus 示例代码](https://github.com/ibus/ibus/blob/main/src/ibusenginesimple.c)
+- [IBus 开发指南](https://github.com/ibus/ibus/wiki/Developing-an-IBus-engine)

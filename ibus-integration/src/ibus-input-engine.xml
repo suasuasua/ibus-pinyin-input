@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE engine>
+<!-- IBus Engine Configuration File for MyInputEngine -->
+<!-- Copyright (C) 2026 Tars AI Assistant -->
+<!-- Licensed under LGPL v2.1+ -->
+
+<engine>
+    <!-- Basic Engine Information -->
+    <name>my-input-engine</name>
+    <name-pinyin>my input engine</name-pinyin>
+    <name-utf8>My Input Engine</name-utf8>
+    <description>Advanced Input Method Engine for IBus Framework</description>
+    <description-pinyin>Advanced input method engine for IBus framework</description-pinyin>
+    <description-utf8>Advanced Input Method Engine for IBus Framework</description-utf8>
+    <author>Tars AI Assistant</author>
+    <author-email>support@example.com</author-email>
+    <license>LGPL</license>
+    <version>1.0.0</version>
+    <version-pinyin>1.0.0</version-pinyin>
+    <version-utf8>1.0.0</version-utf8>
+
+    <!-- Engine Icon Path -->
+    <icon>ibus-input-engine.png</icon>
+
+    <!-- Supported Languages -->
+    <lang>en</lang>
+    <lang>zh_CN</lang>
+    <lang>zh_TW</lang>
+    <lang>ja</lang>
+    <lang>ko</lang>
+
+    <!-- Engine Properties -->
+    <property>
+        <name>InputMode</name>
+        <state>WideLatin</state>
+        <state>NarrowLatin</state>
+        <state>FullWidth</state>
+        <state>HalfWidth</state>
+        <state>Normal</state>
+        <default>Normal</default>
+        <help>Set the input mode for text processing</help>
+        <help-pinyin>Set the input mode for text processing</help-pinyin>
+        <help-utf8>Set the input mode for text processing</help-utf8>
+    </property>
+
+    <property>
+        <name>CursorStyle</name>
+        <state>Blinking</state>
+        <state>Static</state>
+        <default>Blinking</default>
+        <help>Set the cursor blink style</help>
+        <help-pinyin>Set the cursor blink style</help-pinyin>
+        <help-utf8>Set the cursor blink style</help-utf8>
+    </property>
+
+    <property>
+        <name>ShowPreedit</name>
+        <state>Always</state>
+        <state>Never</state>
+        <state>Auto</state>
+        <default>Auto</default>
+        <help>Show or hide the preedit buffer</help>
+        <help-pinyin>Show or hide the preedit buffer</help-pinyin>
+        <help-utf8>Show or hide the preedit buffer</help-utf8>
+    </property>
+
+    <property>
+        <name>SoundEnabled</name>
+        <state>Enabled</state>
+        <state>Disabled</state>
+        <default>Enabled</default>
+        <help>Enable or disable input sound effects</help>
+        <help-pinyin>Enable or disable input sound effects</help-pinyin>
+        <help-utf8>Enable or disable input sound effects</help-utf8>
+    </property>
+
+    <!-- Engine Capabilities -->
+    <capability>Focus</capability>
+    <capability>PreeditText</capability>
+    <capability>AuxiliaryText</capability>
+    <capability>LookupTable</capability>
+    <capability>Property</capability>
+
+    <!-- Keyboard Layout Support -->
+    <keyboard-layout>
+        <name>US</name>
+        <name-pinyin>US</name-pinyin>
+        <name-utf8>US</name-utf8>
+    </keyboard-layout>
+    <keyboard-layout>
+        <name>US International</name>
+        <name-pinyin>US International</name-pinyin>
+        <name-utf8>US International</name-utf8>
+    </keyboard-layout>
+    <keyboard-layout>
+        <name>Chinese (Pinyin)</name>
+        <name-pinyin>Chinese Pinyin</name-pinyin>
+        <name-utf8>Chinese (Pinyin)</name-utf8>
+    </keyboard-layout>
+
+    <!-- Hotkey Configuration -->
+    <hotkey>
+        <name>SwitchToNext</name>
+        <keyval>ISO_Level3_Shift</keyval>
+        <keycode>106</keycode>
+        <state>0</state>
+        <help>Switch to next input method</help>
+        <help-pinyin>Switch to next input method</help-pinyin>
+        <help-utf8>Switch to next input method</help-utf8>
+    </hotkey>
+
+    <hotkey>
+        <name>SwitchToPrevious</name>
+        <keyval>ISO_Level3_Shift</keyval>
+        <keycode>106</keycode>
+        <state>1</state>
+        <help>Switch to previous input method</help>
+        <help-pinyin>Switch to previous input method</help-pinyin>
+        <help-utf8>Switch to previous input method</help-utf8>
+    </hotkey>
+
+    <!-- Engine Factory Function -->
+    <factory-function>my_input_engine_new</factory-function>
+</engine>

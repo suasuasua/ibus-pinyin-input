@@ -1,0 +1,179 @@
+# IBus 框架介绍
+
+## 什么是 IBus
+
+IBus (Intelligent Input Bus) 是一个用于 Linux/Unix 系统的高级输入法框架。它提供以下特点：
+
+- **多语言支持**：支持多种自然语言的输入
+- **模块化设计**：易于创建和集成新的输入法引擎
+- **跨应用支持**：支持 X11、Wayland 等桌面环境
+- **可配置性**：支持丰富的配置选项
+- **无障碍支持**：提供屏幕阅读器集成
+
+## 架构概述
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    应用程序 (Application)                     │
+│  (文字编辑器、浏览器、终端等)                                  │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                IBus Input Context                           │
+│  (输入上下文 - 管理输入状态)                                    │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                   IBus Engine                                │
+│  (输入法引擎 - 处理输入逻辑)                                    │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │  按键处理 (Key Event)                                   │  │
+│  │  候选词生成 (Candidate Generation)                       │  │
+│  │  输入状态管理 (Input State)                               │  │
+│  └───────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    IBus Daemon                               │
+│  (后台服务 - 管理系统级功能)                                    │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## 核心组件
+
+### 1. IBusEngine
+
+输入法引擎抽象类，提供输入处理的基础接口：
+
+```c
+typedef struct _IBusEngine IBusEngine;
+
+// 核心回调函数
+gboolean    (* process_key_event)(IBusEngine *engine,
+                                   guint keyval,
+                                   guint keycode,
+                                   guint state);
+void        (* focus_in)(IBusEngine *engine);
+void        (* focus_out)(IBusEngine *engine);
+void        (* reset)(IBusEngine *engine);
+void        (* enable)(IBusEngine *engine);
+void        (* disable)(IBusEngine *engine);
+```
+
+### 2. IBusEngineSimple
+
+简化版引擎类，适用于基于表格的输入法：
+
+```c
+typedef struct _IBusEngineSimple IBusEngineSimple;
+
+// 添加输入表
+void ibus_engine_simple_add_table(
+    IBusEngineSimple *simple,
+    const guint16 *data,
+    gint max_seq_len,
+    gint n_seqs
+);
+```
+
+### 3. IBusInputContext
+
+输入上下文代理对象，连接应用程序和引擎：
+
+```c
+// 处理键盘事件
+gboolean ibus_input_context_process_key_event(
+    IBusInputContext *context,
+    guint32 keyval,
+    guint32 keycode,
+    guint32 state
+);
+
+// 更新预编辑文本
+void ibus_input_context_set_cursor_location(
+    IBusInputContext *context,
+    gint32 x,
+    gint32 y,
+    gint32 w,
+    gint32 h
+);
+```
+
+## 数据流
+
+```
+用户输入 ──→ IBus Input Context ──→ IBus Engine ──→ 候选词生成
+                              │
+                              ▼
+                      候选词表 (Lookup Table)
+                              │
+                              ▼
+                      用户选择 ──→ 提交文本 ──→ 应用程序
+```
+
+## 输入流程
+
+1. **焦点获取**：应用程序获得焦点，IBusEngine::focus_in 被调用
+2. **上下文初始化**：获取输入上下文，初始化输入状态
+3. **按键处理**：
+   - 用户按键 → IBusInputContext::process_key_event
+   - 引擎处理按键 → IBusEngine::process_key_event
+   - 生成候选词
+4. **候选词显示**：IBusEngine::update_lookup_table
+5. **候选词选择**：用户选择候选词 → IBusEngine::candidate_clicked
+6. **文本提交**：IBusEngine::commit_text
+7. **预编辑更新**：IBusEngine::update_preedit_text
+
+## 配置系统
+
+IBus 使用 gsettings 进行配置：
+
+```bash
+# 设置默认输入法
+gsettings set org.freedesktop.ibus.settings.inputmethod default-input-method "my-input-engine"
+
+# 启用引擎
+gsettings set org.freedesktop.ibus.settings.inputmethod enabled-engines "['my-input-engine']"
+
+# 配置引擎属性
+gsettings set org.freedesktop.ibus.engine.my-input-engine InputMode "Normal"
+```
+
+## 开发指南
+
+### 创建新引擎
+
+1. 继承 IBusEngine 或 IBusEngineSimple
+2. 实现必要的回调函数
+3. 创建引擎描述文件
+4. 编写配置文件
+
+### 引擎描述文件
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<engine>
+    <name>my-input-engine</name>
+    <author>Developer Name</author>
+    <description>Engine Description</description>
+    <lang>en</lang>
+    <lang>zh_CN</lang>
+    <property>
+        <name>InputMode</name>
+        <default>Normal</default>
+    </property>
+</engine>
+```
+
+## 参考资源
+
+- [IBus 官方文档](https://ibus.github.io/docs/)
+- [IBus GitHub](https://github.com/ibus/ibus)
+- [IBus 开发指南](https://github.com/ibus/ibus/wiki/Developing-an-IBus-engine)
+
+## 许可证
+
+IBus 使用 LGPL v2.1 或更高版本许可。
